@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>level</class>
+ <widget class="QMainWindow" name="level">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1164</width>
+    <height>889</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1164</width>
+    <height>2581</height>
+   </size>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>TIC TAC TOE</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>71UU+enQH9L._AC_SY355_.jpg</normaloff>71UU+enQH9L._AC_SY355_.jpg</iconset>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(0, 85, 127);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="logo">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>270</y>
+      <width>491</width>
+      <height>501</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>5000</width>
+      <height>5000</height>
+     </size>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>pb.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbscore">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>251</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>PMingLiU-ExtB</family>
+      <pointsize>26</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Score joueur :</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbScoreValue">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>20</y>
+      <width>141</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>PMingLiU-ExtB</family>
+      <pointsize>26</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>00</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbScoreValueIA">
+    <property name="geometry">
+     <rect>
+      <x>940</x>
+      <y>20</y>
+      <width>141</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>PMingLiU-ExtB</family>
+      <pointsize>26</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>00</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbscore_2">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>20</y>
+      <width>191</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>PMingLiU-ExtB</family>
+      <pointsize>26</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Score IA :</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat3">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>330</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat2">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>330</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat1">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>330</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat4">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>470</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat5">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>470</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat6">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>470</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat7">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>610</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat8">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>610</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnplat9">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>610</y>
+      <width>111</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: #333;
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    background: qradialgradient(
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        radius: 1.35, stop: 0 #fff, stop: 1 #888
+        );
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnValid">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>440</y>
+      <width>141</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>NSimSun</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+    border: 2px solid #555;
+    border-radius: 50px;
+    border-style: outset;
+    
+background-color: rgb(85, 170, 127);
+    padding: 5px;</string>
+    </property>
+    <property name="text">
+     <string>VALIDER</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="l">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>170</y>
+      <width>311</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>PMingLiU-ExtB</family>
+      <pointsize>26</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1164</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuAccueil">
+    <property name="title">
+     <string>Accueil</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuQuitter">
+    <property name="title">
+     <string>Quitter</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuA_propos">
+    <property name="title">
+     <string>A propos</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuR_gles_du_jeu">
+    <property name="title">
+     <string>Aide</string>
+    </property>
+   </widget>
+   <addaction name="menuAccueil"/>
+   <addaction name="menuQuitter"/>
+   <addaction name="menuA_propos"/>
+   <addaction name="menuR_gles_du_jeu"/>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
