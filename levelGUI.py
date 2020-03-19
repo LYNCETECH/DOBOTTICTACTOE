@@ -11,10 +11,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from boardGUI import Ui_board
 
+from MyDobotControl import MyDobot
+
 class Ui_level(object):
     
     def __init__(self, window):
         self.main = window
+        self.dobot = MyDobot()
+        
         
     def setupUi(self, level):
         level.setObjectName("level")

@@ -20,7 +20,7 @@ from random import randint
 
 from scipy.spatial import distance as dist
 
-from MyDobotControl import MyDobot
+
 
 PLAYERS = ["X","O"]
 
@@ -28,7 +28,7 @@ PLAYERS = ["X","O"]
 
 class Ui_board(object):
     
-    def __init__(self, dobot_manager,diff, level):
+    def __init__(self, dobot_manager,diff, level,_dobot):
         self._dm = dobot_manager
         self.gameboard = ["?"]*9
         self.currentbuffer = 0
@@ -60,7 +60,7 @@ class Ui_board(object):
         self.currentplayer = "O"
      
         
-        self.dobot = MyDobot()
+        self.dobot = _dobot
         self.dobot.connectDobot()
         self.dobot.initDobot()
     
@@ -538,7 +538,7 @@ class Ui_board(object):
     def _ai_make_move(self,event):
         origBoard = self.gameboard
         pos = self.make_best_move(origBoard,self.enemy,self.diff)
-        self.dobot.movePawnTo('p'+str(pos+1))
+        #self.dobot.movePawnTo('p'+str(pos+1))
         self._define_color(pos)
         self._update_board(pos, self.enemy)
         self.winner()
