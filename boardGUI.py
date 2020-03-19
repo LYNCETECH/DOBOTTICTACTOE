@@ -58,6 +58,8 @@ class Ui_board(object):
         self.player="O"
         self.enemy = "X"
         self.currentplayer = "O"
+     
+        
         self.dobot = MyDobot()
         self.dobot.connectDobot()
         self.dobot.initDobot()
@@ -567,6 +569,8 @@ class Ui_board(object):
     
     def btnvalid_click(self,event):
         if(self.end):
+            self.dobot.disconnectDobot()
+            self.dobot=None
             self.keepwindow.close()
             self.level.show()
             
@@ -582,7 +586,7 @@ class Ui_board(object):
             self.lbnotification.setText("GAME OVER!")
             self.btnValid.setText("RECOMMENCER")
             self.end=True
-            self.dobot.disconnectDobot()
+            
             QtWidgets.QApplication.processEvents()
             self.stop()
             self.btnValid.setEnabled(True)
@@ -592,14 +596,14 @@ class Ui_board(object):
             self.lbnotification.setText("Vous avez gagné")
             self.btnValid.setText("RECOMMENCER")
             self.end=True
-            self.dobot.disconnectDobot()
+            
             QtWidgets.QApplication.processEvents()
             self.stop()
             self.btnValid.setEnabled(True)
         
         elif (winner == self.enemy):
             self.setpoints()
-            self.dobot.disconnectDobot()
+            
             self.lbnotification.setText("Vous avez perdu")
             self.btnValid.setText("RECOMMENCER")
             self.end=True
