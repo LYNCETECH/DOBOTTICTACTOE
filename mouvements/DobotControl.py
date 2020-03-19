@@ -1,0 +1,15 @@
+from MyDobotControl import MyDobot
+
+test1 = MyDobot()
+test1.connectDobot()
+test1.initDobot()
+# test1.movePawnTo('p1')
+# test1.movePawnTo('p2')
+test1.movePawnTo('p3')
+test1.movePawnTo('p4')
+test1.movePawnTo('p5')
+# test1.movePawnTo('p6')
+test1.movePawnTo('p7')
+# test1.movePawnTo('p8')
+test1.movePawnTo('p9')
+test1.disconnectDobot()

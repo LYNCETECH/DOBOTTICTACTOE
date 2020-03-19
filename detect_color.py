@@ -87,7 +87,7 @@ for c in cnts:
 	c = c.astype("float")
 	c *= ratio
 	c = c.astype("int")
-	text = "{}".format(color)
+	text = "{},{}".format(cX,cY)
 	cv2.drawContours(image, [c], -1, (0, 255, 0), 3)
 	
 	cv2.putText(image, text, (cX, cY),

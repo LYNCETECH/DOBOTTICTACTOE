@@ -20,6 +20,7 @@ from random import randint
 
 from scipy.spatial import distance as dist
 
+from Mouvements.MyDobotControl import MyDobot
 
 PLAYERS = ["X","O"]
 
@@ -57,6 +58,9 @@ class Ui_board(object):
         self.player="O"
         self.enemy = "X"
         self.currentplayer = "O"
+        self.dobot = MyDobot()
+        self.dobot.connectDobot()
+        self.dobot.initDobot()
     
     
     def _is_board_empty(self):
@@ -219,7 +223,16 @@ class Ui_board(object):
     
     def minimax(self, newBoard, player):
         available_pos = self._get_all_free_pos(newBoard)
-
+        if self._is_game_won_player("X", newBoard):
+            score = 0
+            return score
+        elif self._is_game_won_player("O", newBoard):
+            score = 100
+            return score
+        elif len(available_pos) == 0:
+            score = 50
+            return score
+            
         if player == "O":
             bestVal = 0
             for var in available_pos:
@@ -243,14 +256,14 @@ class Ui_board(object):
             
     def make_best_move(self, board, player,difficulty):
         if difficulty == 0:
-            diff_random = 100
+            diff_random = 25
         elif difficulty == 1:
-            diff_random = 200
+            diff_random = 75
         elif difficulty == 2:
-            diff_random = 500
+            diff_random = 100
         
         # Generate random
-        rnum = randint(0, 500)
+        rnum = randint(0, 100)
         # Find available moves
         initValue = 50
         best_choices = []
@@ -523,6 +536,8 @@ class Ui_board(object):
     def _ai_make_move(self,event):
         origBoard = self.gameboard
         pos = self.make_best_move(origBoard,self.enemy,self.diff)
+        
+        self.dobot.movePawnTo('p'+str(pos+1))
         self._define_color(pos)
         self._update_board(pos, self.enemy)
         self.winner()
