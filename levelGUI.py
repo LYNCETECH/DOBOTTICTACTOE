@@ -141,7 +141,7 @@ class Ui_level(object):
     def start(self,leveln):
         self.keepingWindows.hide()
         self.MWindow = QtWidgets.QMainWindow()
-        self.ui=Ui_board(False,leveln,self.keepingWindows)
+        self.ui=Ui_board(leveln,self.keepingWindows,self.dobot)
         self.ui.setupUi(self.MWindow)
         self.MWindow.show()
         

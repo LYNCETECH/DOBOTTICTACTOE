@@ -17,6 +17,7 @@ from datetime import datetime
 from time import sleep
 
 from random import randint
+from color import ImageRecognition
 
 from scipy.spatial import distance as dist
 
@@ -28,8 +29,8 @@ PLAYERS = ["X","O"]
 
 class Ui_board(object):
     
-    def __init__(self, dobot_manager,diff, level,_dobot):
-        self._dm = dobot_manager
+    def __init__(self,diff, level,_dobot):
+        #self._dm = dobot_manager
         self.gameboard = ["?"]*9
         self.currentbuffer = 0
         self.moves = []
@@ -59,18 +60,21 @@ class Ui_board(object):
         self.enemy = "X"
         self.currentplayer = "O"
      
-        
+        self.recognition= ImageRecognition()
         self.dobot = _dobot
         self.dobot.connectDobot()
         self.dobot.initDobot()
+        
     
-    
+    #Vérifie si le plateau est vide
+    #Pas de parametre d'entrée
     def _is_board_empty(self):
         unique = list(set(self._gameboard.status()))
         if (len(unique) == 1) and unique[0] == "?":
             return True
         return False
-    
+        
+    #Vérifie si le jeu est terminé sans vainqueur
     def _is_game_won(self):
         for player in PLAYERS:
             for combos in self._winning_combinations:
@@ -80,26 +84,20 @@ class Ui_board(object):
         if "?" not in self.gameboard:
             return "tie"
         return None
-    
+    #Vérifie le joueur a gagné ou pas
     def _is_game_won_player(self, player, board):
         for combos in self._winning_combinations:
             if (board[combos[0]] == player and board[combos[1]] == player and board[combos[2]] == player):
                 return True
 
         return False
-    
-    def _get_free_position(self):
-        board = self.gameboard
-        free = [i for i,pos in enumerate(board) if pos=="?"]
-        return random.choice(free)
-
+        
+    #retourne les positions non occupée par les joueurs
     def _get_all_free_pos(self, board):
         free = [i for i, pos in enumerate(board) if pos == "?"]
         return free
-
-    def _decide_initial_player(self):
-        return random.choice(PLAYERS)
-            
+        
+    #Vérifie si le mouvement est valide (position correcte)
     def _is_move_valid(self, move):
         pos = -1
         try:
@@ -109,18 +107,20 @@ class Ui_board(object):
         if self.gameboard[pos] == "?":
             return pos
         return None
-
+    
+    #Mise à jour du plateau par les donnés du joueur
     def _update_board(self, pos, player):
         self.gameboard[pos] = player
         #self._gameboard.positions[pos].draw_symbol_on_position(player, pos)
-
+    
+    #Mise à jour du plateau par les donnés de l'ia
     def update_ai_board(self,pos,player, board):
         board[pos] = player
         return board
     
     
     
-
+    #Mise à jour du plateau virtuel par les donnés du joueur ou de l'ia
     def _define_color(self,pos):
     
         if(self.currentplayer=="O" and self.gameboard[pos]=="?"):
@@ -215,7 +215,7 @@ class Ui_board(object):
         self.btnplat7.setStyleSheet(self.dfcolor)        
         self.btnplat8.setStyleSheet(self.dfcolor)        
         self.btnplat9.setStyleSheet(self.dfcolor)
-        self.__init__(False,self.diff)#need btn recommencer
+        #self.__init__(False,self.diff)#need btn recommencer
             
     def winner(self):
         return self._is_game_won()
@@ -536,9 +536,10 @@ class Ui_board(object):
            sleep(1)
 
     def _ai_make_move(self,event):
+        self.gameboard=self.recognition.recongnition()
         origBoard = self.gameboard
         pos = self.make_best_move(origBoard,self.enemy,self.diff)
-        #self.dobot.movePawnTo('p'+str(pos+1))
+        self.dobot.movePawnTo('p'+str(pos+1))
         self._define_color(pos)
         self._update_board(pos, self.enemy)
         self.winner()
