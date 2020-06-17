@@ -18,10 +18,10 @@ from time import sleep
 
 from random import randint
 from color import ImageRecognition
-
+from Board import Board
 from scipy.spatial import distance as dist
-
-
+from PIL import Image, ImageDraw,ImageFont
+import numpy
 
 PLAYERS = ["X","O"]
 
@@ -31,13 +31,13 @@ class Ui_board(object):
     
     def __init__(self,diff, level,_dobot):
         #self._dm = dobot_manager
-        self.gameboard = ["?"]*9
+        self.gameboard = ['-']*9
         self.currentbuffer = 0
         self.moves = []
         self.diff = diff
         self.turn=False
         self.checked=False
-        self.currentPos=0
+        self.currentPos=-1
         self.active=[0]*9
         self.score_ia = 0
         self.score_player=0
@@ -60,7 +60,7 @@ class Ui_board(object):
         self.enemy = "X"
         self.currentplayer = "O"
      
-        self.recognition= ImageRecognition()
+        
         self.dobot = _dobot
         self.dobot.connectDobot()
         self.dobot.initDobot()
@@ -70,7 +70,7 @@ class Ui_board(object):
     #Pas de parametre d'entrée
     def _is_board_empty(self):
         unique = list(set(self._gameboard.status()))
-        if (len(unique) == 1) and unique[0] == "?":
+        if (len(unique) == 1) and unique[0] == "-":
             return True
         return False
         
@@ -81,7 +81,7 @@ class Ui_board(object):
                 if (self.gameboard[combos[0]] == player and self.gameboard[combos[1]] == player and self.gameboard[combos[2]] == player):
                     return player
                 
-        if "?" not in self.gameboard:
+        if "-" not in self.gameboard:
             return "tie"
         return None
     #Vérifie le joueur a gagné ou pas
@@ -94,7 +94,7 @@ class Ui_board(object):
         
     #retourne les positions non occupée par les joueurs
     def _get_all_free_pos(self, board):
-        free = [i for i, pos in enumerate(board) if pos == "?"]
+        free = [i for i, pos in enumerate(board) if pos == "-"]
         return free
         
     #Vérifie si le mouvement est valide (position correcte)
@@ -104,7 +104,7 @@ class Ui_board(object):
             pos = int(move)
         except:
             return None
-        if self.gameboard[pos] == "?":
+        if self.gameboard[pos] == "-":
             return pos
         return None
     
@@ -119,92 +119,37 @@ class Ui_board(object):
         return board
     
     
-    
+    ##191970 p ,ia:#DE310C
     #Mise à jour du plateau virtuel par les donnés du joueur ou de l'ia
-    def _define_color(self,pos):
-    
-        if(self.currentplayer=="O" and self.gameboard[pos]=="?"):
-            if(self.checked==False):
-                print("uncheck")
-                if(self.active[pos]==0):
-                    print("color")
-                    self.tabBtn[pos].setStyleSheet("color: #333;\n"
-                    "border: 2px solid #555;\n"
-                    "border-radius: 50px;\n"
-                    "border-style: outset;\n"
-                    "background: qradialgradient(\n"
-                    "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
-                    "        radius: 1.35, stop: 0 #fff, stop: 1 #191970\n"
-                    "        );\n"
-                    "padding: 5px;" )
-                    self.active[pos]=1
-                    self.currentPos=pos
-                    self.checked=True
-                else:
-                    print("uu")
-                    self.tabBtn[pos].setStyleSheet("color: #333;\n"
-                    "border: 2px solid #555;\n"
-                    "border-radius: 50px;\n"
-                    "border-style: outset;\n"
-                    "background: qradialgradient(\n"
-                    "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
-                    "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
-                    "        );\n"
-                    "padding: 5px;" )
-                    self.active[pos]=0
-                    self.checked=False
-            else:
-                print("check")
-                if (pos==self.currentPos):
-                    print("ooo")
-                    self.tabBtn[pos].setStyleSheet("color: #333;\n"
-                    "border: 2px solid #555;\n"
-                    "border-radius: 50px;\n"
-                    "border-style: outset;\n"
-                    "background: qradialgradient(\n"
-                    "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
-                    "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
-                    "        );\n"
-                    "padding: 5px;" )
-                    self.checked=False
-                    self.active[pos]=0
-                    
-                
-                
-                
-        elif(self.currentplayer=="X" and self.gameboard[pos]=="?"):
-                self.tabBtn[pos].setStyleSheet("color: #333;\n"
+    def _define_color(self,pos,color):
+        self.tabBtn[pos].setStyleSheet("color: #333;\n"
                 "border: 2px solid #555;\n"
                 "border-radius: 50px;\n"
                 "border-style: outset;\n"
                 "background: qradialgradient(\n"
                 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
-                "        radius: 1.35, stop: 0 #fff, stop: 1 #DE310C\n"
+                "        radius: 1.35, stop: 0 #fff, stop: 1 "+color+"\n"
                 "        );\n"
-                "padding: 5px;")
-            
-       
-                
-        
-        
-        
-    def _make_move(self,pos,event):
-        if self.currentplayer == self.player:
-            self._ask_player_move(pos,event)
-        
+                "padding: 5px;")  
 
+    
+    
+        
+    #initialise le plateau
     def init_gameboard_ai(self):
-        #board = ["X", "?", "?", "O", "?", "O", "?", "X", "?"]
-        board = 9*["?"]
+        #board = ["X", "-", "-", "O", "-", "O", "-", "X", "-"]
+        board = ["-"]*9
         self.gameboard = board
         return board
 
+    #permet de changer de joueur
     def _change_player(self,player):
         if player == "X":
             return "O"
         else:
             return "X"
     
+    #efface le plateau
     def clear(self):   
         self.btnplat1.setStyleSheet(self.dfcolor)
         self.btnplat2.setStyleSheet(self.dfcolor)
@@ -216,13 +161,13 @@ class Ui_board(object):
         self.btnplat8.setStyleSheet(self.dfcolor)        
         self.btnplat9.setStyleSheet(self.dfcolor)
         #self.__init__(False,self.diff)#need btn recommencer
-            
+    
+    #vérifie s'il y'a un gagnant        
     def winner(self):
         return self._is_game_won()
         
-           
-            
-    
+                 
+    #algo min max
     def minimax(self, newBoard, player):
         available_pos = self._get_all_free_pos(newBoard)
         if self._is_game_won_player("X", newBoard):
@@ -241,7 +186,7 @@ class Ui_board(object):
                 # print("Making move: " + str(var))
                 newBoard = self.update_ai_board(var, player, newBoard)
                 moveVal = self.minimax(newBoard, "X")
-                newBoard = self.update_ai_board(var, "?", newBoard)
+                newBoard = self.update_ai_board(var, "-", newBoard)
                 bestVal = max(bestVal, moveVal)
             return bestVal
 
@@ -252,7 +197,7 @@ class Ui_board(object):
                 # print("Making move: " + str(var))
                 newBoard = self.update_ai_board(var, player, newBoard)
                 moveVal = self.minimax(newBoard, "O")
-                newBoard = self.update_ai_board(var, "?", newBoard)
+                newBoard = self.update_ai_board(var, "-", newBoard)
                 bestVal = min(bestVal, moveVal)
             return bestVal
             
@@ -282,7 +227,7 @@ class Ui_board(object):
                 for move in available_pos:
                     board = self.update_ai_board(move, player, board)
                     moveVal = self.minimax(board, self._change_player(player))
-                    board = self.update_ai_board(move, "?", board)
+                    board = self.update_ai_board(move, "-", board)
 
                     if moveVal > initValue:
                         best_choices = [move]
@@ -293,7 +238,7 @@ class Ui_board(object):
                 for move in available_pos:
                     board = self.update_ai_board(move, player, board)
                     moveVal = self.minimax(board, self._change_player(player))
-                    board = self.update_ai_board(move, "?", board)
+                    board = self.update_ai_board(move, "-", board)
 
                     if moveVal < initValue:
                         best_choices = [move]
@@ -310,8 +255,8 @@ class Ui_board(object):
     
     def setupUi(self, level):
         level.setObjectName("level")
-        level.resize(1164, 889)
-        level.setMaximumSize(QtCore.QSize(1164, 2581))
+        level.resize(1689, 1112)
+        level.setMaximumSize(QtCore.QSize(1800, 2581))
         level.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         icon = QtGui.QIcon()
         self.keepwindow=level
@@ -322,44 +267,33 @@ class Ui_board(object):
         self.centralwidget = QtWidgets.QWidget(level)
         self.centralwidget.setObjectName("centralwidget")
         self.logo = QtWidgets.QLabel(self.centralwidget)
-        self.logo.setGeometry(QtCore.QRect(310, 270, 491, 501))
+        self.logo.setGeometry(QtCore.QRect(20, 300, 491, 501))
         self.logo.setMaximumSize(QtCore.QSize(5000, 5000))
         self.logo.setText("")
         self.logo.setPixmap(QtGui.QPixmap("pb.png"))
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
-        self.lbscore = QtWidgets.QLabel(self.centralwidget)
-        self.lbscore.setGeometry(QtCore.QRect(20, 20, 251, 111))
+    
         font = QtGui.QFont()
         font.setFamily("PMingLiU-ExtB")
         font.setPointSize(26)
         font.setBold(True)
         font.setWeight(75)
-        self.lbscore.setFont(font)
-        self.lbscore.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lbscore.setObjectName("lbscore")
-        self.lbScoreValue = QtWidgets.QLabel(self.centralwidget)
-        self.lbScoreValue.setGeometry(QtCore.QRect(290, 20, 141, 111))
+        
         font = QtGui.QFont()
         font.setFamily("PMingLiU-ExtB")
         font.setPointSize(26)
         font.setBold(True)
         font.setWeight(75)
-        self.lbScoreValue.setFont(font)
-        self.lbScoreValue.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lbScoreValue.setObjectName("lbScoreValue")
-        self.lbScoreValueIA = QtWidgets.QLabel(self.centralwidget)
-        self.lbScoreValueIA.setGeometry(QtCore.QRect(940, 20, 141, 111))
+        
         font = QtGui.QFont()
         font.setFamily("PMingLiU-ExtB")
         font.setPointSize(26)
         font.setBold(True)
         font.setWeight(75)
-        self.lbScoreValueIA.setFont(font)
-        self.lbScoreValueIA.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lbScoreValueIA.setObjectName("lbScoreValueIA")
+        
         self.lbscore_2 = QtWidgets.QLabel(self.centralwidget)
-        self.lbscore_2.setGeometry(QtCore.QRect(740, 20, 191, 111))
+        self.lbscore_2.setGeometry(QtCore.QRect(730, 20, 191, 111))
         font = QtGui.QFont()
         font.setFamily("PMingLiU-ExtB")
         font.setPointSize(26)
@@ -369,7 +303,7 @@ class Ui_board(object):
         self.lbscore_2.setStyleSheet("color: rgb(255, 255, 255);")
         self.lbscore_2.setObjectName("lbscore_2")
         self.btnplat3 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat3.setGeometry(QtCore.QRect(640, 330, 111, 101))
+        self.btnplat3.setGeometry(QtCore.QRect(350, 360, 111, 101))
         self.btnplat3.setStyleSheet("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
@@ -382,7 +316,7 @@ class Ui_board(object):
         self.btnplat3.setText("")
         self.btnplat3.setObjectName("btnplat3")
         self.btnplat2 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat2.setGeometry(QtCore.QRect(500, 330, 111, 101))
+        self.btnplat2.setGeometry(QtCore.QRect(210, 360, 111, 101))
         self.btnplat2.setStyleSheet("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
@@ -395,7 +329,7 @@ class Ui_board(object):
         self.btnplat2.setText("")
         self.btnplat2.setObjectName("btnplat2")
         self.btnplat1 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat1.setGeometry(QtCore.QRect(360, 330, 111, 101))
+        self.btnplat1.setGeometry(QtCore.QRect(70, 360, 111, 101))
         self.btnplat1.setStyleSheet("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
@@ -405,11 +339,11 @@ class Ui_board(object):
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
 "    padding: 5px;")
-        self.btnplat1.setText("")
-        self.btnplat1.setObjectName("btnplat1")
+        self.btnplat1.setText((""))
+        self.btnplat1.setObjectName(("btnplat1"))
         self.btnplat4 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat4.setGeometry(QtCore.QRect(360, 470, 111, 101))
-        self.btnplat4.setStyleSheet("color: #333;\n"
+        self.btnplat4.setGeometry(QtCore.QRect(70, 500, 111, 101))
+        self.btnplat4.setStyleSheet(("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
@@ -417,12 +351,12 @@ class Ui_board(object):
 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
-"    padding: 5px;")
-        self.btnplat4.setText("")
-        self.btnplat4.setObjectName("btnplat4")
+"    padding: 5px;"))
+        self.btnplat4.setText((""))
+        self.btnplat4.setObjectName(("btnplat4"))
         self.btnplat5 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat5.setGeometry(QtCore.QRect(500, 470, 111, 101))
-        self.btnplat5.setStyleSheet("color: #333;\n"
+        self.btnplat5.setGeometry(QtCore.QRect(210, 500, 111, 101))
+        self.btnplat5.setStyleSheet(("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
@@ -430,12 +364,12 @@ class Ui_board(object):
 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
-"    padding: 5px;")
-        self.btnplat5.setText("")
-        self.btnplat5.setObjectName("btnplat5")
+"    padding: 5px;"))
+        self.btnplat5.setText((""))
+        self.btnplat5.setObjectName(("btnplat5"))
         self.btnplat6 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat6.setGeometry(QtCore.QRect(640, 470, 111, 101))
-        self.btnplat6.setStyleSheet("color: #333;\n"
+        self.btnplat6.setGeometry(QtCore.QRect(350, 500, 111, 101))
+        self.btnplat6.setStyleSheet(("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
@@ -443,12 +377,12 @@ class Ui_board(object):
 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
-"    padding: 5px;")
-        self.btnplat6.setText("")
-        self.btnplat6.setObjectName("btnplat6")
+"    padding: 5px;"))
+        self.btnplat6.setText((""))
+        self.btnplat6.setObjectName(("btnplat6"))
         self.btnplat7 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat7.setGeometry(QtCore.QRect(360, 610, 111, 101))
-        self.btnplat7.setStyleSheet("color: #333;\n"
+        self.btnplat7.setGeometry(QtCore.QRect(70, 640, 111, 101))
+        self.btnplat7.setStyleSheet(("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
@@ -456,12 +390,12 @@ class Ui_board(object):
 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
-"    padding: 5px;")
-        self.btnplat7.setText("")
-        self.btnplat7.setObjectName("btnplat7")
+"    padding: 5px;"))
+        self.btnplat7.setText((""))
+        self.btnplat7.setObjectName(("btnplat7"))
         self.btnplat8 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat8.setGeometry(QtCore.QRect(500, 610, 111, 101))
-        self.btnplat8.setStyleSheet("color: #333;\n"
+        self.btnplat8.setGeometry(QtCore.QRect(210, 640, 111, 101))
+        self.btnplat8.setStyleSheet(("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
@@ -469,12 +403,12 @@ class Ui_board(object):
 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
-"    padding: 5px;")
-        self.btnplat8.setText("")
-        self.btnplat8.setObjectName("btnplat8")
+"    padding: 5px;"))
+        self.btnplat8.setText((""))
+        self.btnplat8.setObjectName(("btnplat8"))
         self.btnplat9 = QtWidgets.QPushButton(self.centralwidget)
-        self.btnplat9.setGeometry(QtCore.QRect(640, 610, 111, 101))
-        self.btnplat9.setStyleSheet("color: #333;\n"
+        self.btnplat9.setGeometry(QtCore.QRect(350, 640, 111, 101))
+        self.btnplat9.setStyleSheet(("color: #333;\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
@@ -482,26 +416,25 @@ class Ui_board(object):
 "        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
 "        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
 "        );\n"
-"    padding: 5px;")
-        self.btnplat9.setText("")
-        self.btnplat9.setObjectName("btnplat9")
+"    padding: 5px;"))
+        self.btnplat9.setText((""))
+        self.btnplat9.setObjectName(("btnplat9"))
         self.btnValid = QtWidgets.QPushButton(self.centralwidget)
-        self.btnValid.setGeometry(QtCore.QRect(890, 440, 141, 111))
+        self.btnValid.setGeometry(QtCore.QRect(180, 830, 141, 111))
         font = QtGui.QFont()
-        font.setFamily("NSimSun")
+        font.setFamily(("NSimSun"))
         font.setPointSize(12)
         self.btnValid.setFont(font)
-        self.btnValid.setStyleSheet("color: rgb(255, 255, 255);\n"
+        self.btnValid.setStyleSheet(("color: rgb(255, 255, 255);\n"
 "    border: 2px solid #555;\n"
 "    border-radius: 50px;\n"
 "    border-style: outset;\n"
 "    \n"
 "background-color: rgb(85, 170, 127);\n"
-"    padding: 5px;")
-        
-        self.btnValid.setObjectName("btnValid")
+"    padding: 5px;"))
+        self.btnValid.setObjectName(("btnValid"))
         self.lbnotification = QtWidgets.QLabel(self.centralwidget)
-        self.lbnotification.setGeometry(QtCore.QRect(390, 170, 311, 71))
+        self.lbnotification.setGeometry(QtCore.QRect(100, 180, 311, 71))
         font = QtGui.QFont()
         font.setFamily("PMingLiU-ExtB")
         font.setPointSize(26)
@@ -509,18 +442,85 @@ class Ui_board(object):
         font.setWeight(75)
         self.lbnotification.setFont(font)
         self.lbnotification.setStyleSheet("color: rgb(255, 255, 255);")
-        self.lbnotification.setText("")
         self.lbnotification.setObjectName("lbnotification")
+        self.imageia1 = QtWidgets.QLabel(self.centralwidget)
+        self.imageia1.setGeometry(QtCore.QRect(590, 190, 521, 391))
+        self.imageia1.setScaledContents(True)
+        font = QtGui.QFont()
+        font.setFamily(("PMingLiU-ExtB"))
+        font.setPointSize(26)
+        font.setBold(True)
+        font.setWeight(75)
+        self.imageia1.setFont(font)
+        self.imageia1.setStyleSheet(("color: rgb(255, 255, 255);\n"
+"gridline-color: rgb(255, 255, 255);\n"
+"border-color: rgb(255, 255, 255);"))
+        self.imageia1.setText((""))
+        self.imageia1.setObjectName(("imageia1"))
+        self.imageia2 = QtWidgets.QLabel(self.centralwidget)
+        self.imageia2.setGeometry(QtCore.QRect(1120, 190, 521, 391))
+        self.imageia2.setScaledContents(True)
+        font = QtGui.QFont()
+        font.setFamily(("PMingLiU-ExtB"))
+        font.setPointSize(26)
+        font.setBold(True)
+        font.setWeight(75)
+        self.imageia2.setFont(font)
+        self.imageia2.setStyleSheet(("color: rgb(255, 255, 255);"))
+        self.imageia2.setText((""))
+        
+        self.imageia2.setObjectName(("imageia2"))
+        self.imageia2_2 = QtWidgets.QLabel(self.centralwidget)
+        self.imageia2_2.setGeometry(QtCore.QRect(600, 690, 301, 291))
+        self.imageia2_2.setScaledContents(True)
+        font = QtGui.QFont()
+        font.setFamily(("PMingLiU-ExtB"))
+        font.setPointSize(26)
+        font.setBold(True)
+        font.setWeight(75)
+        self.imageia2_2.setFont(font)
+        self.imageia2_2.setStyleSheet(("color: rgb(255, 255, 255);"))
+        self.imageia2_2.setText((""))
+        self.imageia2_2.setScaledContents(True)
+        self.imageia2_2.setObjectName(("imageia2_2"))
+        self.btnplat1_2 = QtWidgets.QPushButton(self.centralwidget)
+        self.btnplat1_2.setGeometry(QtCore.QRect(520, 130, 111, 101))
+        self.btnplat1_2.setStyleSheet(("color: #333;\n"
+"    border: 2px solid #555;\n"
+"    border-radius: 50px;\n"
+"    border-style: outset;\n"
+"    background: qradialgradient(\n"
+"        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
+"        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
+"        );\n"
+"    padding: 5px;"))
+        self.btnplat1_2.setObjectName(("btnplat1_2"))
+        self.btnplat1_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.btnplat1_3.setGeometry(QtCore.QRect(1110, 120, 111, 101))
+        self.btnplat1_3.setStyleSheet(("color: #333;\n"
+"    border: 2px solid #555;\n"
+"    border-radius: 50px;\n"
+"    border-style: outset;\n"
+"    background: qradialgradient(\n"
+"        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
+"        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
+"        );\n"
+"    padding: 5px;"))
+        self.btnplat1_3.setObjectName(("btnplat1_3"))
+        self.btnplat1_4 = QtWidgets.QPushButton(self.centralwidget)
+        self.btnplat1_4.setGeometry(QtCore.QRect(580, 620, 111, 101))
+        self.btnplat1_4.setStyleSheet(("color: #333;\n"
+"    border: 2px solid #555;\n"
+"    border-radius: 50px;\n"
+"    border-style: outset;\n"
+"    background: qradialgradient(\n"
+"        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,\n"
+"        radius: 1.35, stop: 0 #fff, stop: 1 #888\n"
+"        );\n"
+"    padding: 5px;"))
+        self.btnplat1_4.setObjectName(("btnplat1_4"))
+        
         level.setCentralWidget(self.centralwidget)
-        self.btnplat1.clicked.connect(self.btn1_click)
-        self.btnplat2.clicked.connect(self.btn2_click)
-        self.btnplat3.clicked.connect(self.btn3_click)
-        self.btnplat4.clicked.connect(self.btn4_click)
-        self.btnplat5.clicked.connect(self.btn5_click)
-        self.btnplat6.clicked.connect(self.btn6_click)
-        self.btnplat7.clicked.connect(self.btn7_click)
-        self.btnplat8.clicked.connect(self.btn8_click)
-        self.btnplat9.clicked.connect(self.btn9_click)
         self.btnValid.clicked.connect(self.btnvalid_click)
         self.tabBtn=[self.btnplat1,self.btnplat2,self.btnplat3,self.btnplat4,self.btnplat5,self.btnplat6,self.btnplat7,self.btnplat8,self.btnplat9]
         self.retranslateUi(level)
@@ -530,33 +530,82 @@ class Ui_board(object):
         valid_pos = self._is_move_valid(pos)
         if (valid_pos != None):
            self._update_board(valid_pos, self.player)
-           self.currentplayer = self.enemy
-           self.turn=True
-           self.lbnotification.setText("Au tour de l'IA")
-           sleep(1)
+           
+           
 
     def _ai_make_move(self,event):
-        self.gameboard=self.recognition.recongnition()
-        origBoard = self.gameboard
-        pos = self.make_best_move(origBoard,self.enemy,self.diff)
-        self.dobot.movePawnTo('p'+str(pos+1))
-        self._define_color(pos)
-        self._update_board(pos, self.enemy)
-        self.winner()
-        self.currentplayer = self.player
-        self.turn=False
-        self.lbnotification.setText("A vous de jouer")
+        recognition= ImageRecognition()
+        self.lbnotification.setText("Au tour de l'IA")
+        QtWidgets.QApplication.processEvents()
+        do=recognition.shoot()
+        
+        self.imageia1.setPixmap(QtGui.QPixmap(("saved.png")))
+        
+        
+        
+
+        self.gameboard=recognition.recongnition()
+
+        if do :
+            self.imageia2.setPixmap(QtGui.QPixmap(("output.png")));
+            QtWidgets.QApplication.processEvents()
+
+        texto=""
+        for index,x in enumerate(self.gameboard):
+            r=(index+1)%3
+            texto=texto+x
+            if r==0 :
+                texto=texto+"\n"
+           
+            if x =='O':
+                self.checked=False
+                self.currentplayer = self.player
+                self._define_color(index,"#197070")
+        
+            if x=='X':
+                self._define_color(index,"#DE310C")
+
+        if self.gameboard!=None:
+            img = Image.new('RGB', (400, 400), color = (73, 109, 137))
+            fnt = ImageFont.truetype('Roboto-Bold.ttf', 50)
+            d = ImageDraw.Draw(img)   
+            d.text((20,20),texto,font=fnt, fill=(255,255,0))
+            img.save('plateau.png')
+            self.imageia2_2.setPixmap(QtGui.QPixmap(("plateau.png")))
+            QtWidgets.QApplication.processEvents()
+        #self.show_gameboard() 
+        
+        win=self._winner()
+       
+        if win==False:
+            self.currentplayer = self.enemy
+            self.turn=True
+            origBoard = self.gameboard
+            pos = self.make_best_move(origBoard,self.enemy,self.diff)
+            self.dobot.movePawnTo('p'+str(pos+1))
+            self._define_color(pos,"#DE310C")
+            self._update_board(pos, self.enemy)
+            win=self._winner()
+            if win==False:
+                self.lbnotification.setText("A vous de jouer")
+            QtWidgets.QApplication.processEvents()
+            self.currentplayer = self.player
+            self.turn=False
+            
+
         sleep(1)
+            
+        
+        
+        
 
     def retranslateUi(self, level):
         _translate = QtCore.QCoreApplication.translate
         level.setWindowTitle(_translate("level", "TIC TAC TOE"))
-        self.lbscore.setText(_translate("level", "Score joueur :"))
-        self.lbScoreValue.setText(_translate("level", "00"))
-        self.lbScoreValueIA.setText(_translate("level", "00"))
-        self.lbscore_2.setText(_translate("level", "Score IA :"))
         self.btnValid.setText(_translate("level", "VALIDER"))
-        
+        self.btnplat1_2.setText(_translate("level", "1", None))
+        self.btnplat1_3.setText(_translate("level", "2", None))
+        self.btnplat1_4.setText(_translate("level", "3", None))
     
     def show_gameboard(self, gameboard=None):
         if gameboard==None:
@@ -574,15 +623,20 @@ class Ui_board(object):
             self.dobot=None
             self.keepwindow.close()
             self.level.show()
-            
-            
-        self._make_move(self.currentPos,event)
-        QtWidgets.QApplication.processEvents()
-        self.show_gameboard()
+
+        #self._make_move(self.currentPos,event)
         self.checked=False
+        QtWidgets.QApplication.processEvents() 
+        self.show_gameboard()
+        
+        if self.end==False :
+            self._ai_make_move(event)
+        QtWidgets.QApplication.processEvents()  
+        self.show_gameboard()
+
+    def _winner(self) :
         winner=self.winner()
-        QtWidgets.QApplication.processEvents()
-        print(winner)
+
         if (winner == "tie"):
             self.lbnotification.setText("GAME OVER!")
             self.btnValid.setText("RECOMMENCER")
@@ -611,13 +665,10 @@ class Ui_board(object):
             QtWidgets.QApplication.processEvents()
             self.stop()
             self.btnValid.setEnabled(True)
-            
-        if self.currentplayer == self.enemy and winner!="tie" and winner!="X" and winner!="O":
-            self._ai_make_move(event)
-            QtWidgets.QApplication.processEvents()
-            
-        self.show_gameboard()
-    
+        
+
+        return self.end
+
     def setpoints(self):
         available_pos = self._get_all_free_pos(self.gameboard)
         if self._is_game_won_player("X", self.gameboard):
@@ -633,8 +684,7 @@ class Ui_board(object):
             self.score_ia = self.score_ia +0
             self.score_player=self.score_player + 0
             
-        self.lbScoreValue.setText(str(self.score_player))
-        self.lbScoreValueIA.setText(str(self.score_ia))
+        
         
             
     def stop(self):
@@ -642,42 +692,7 @@ class Ui_board(object):
             self.tabBtn[i].setEnabled(False)
         self.btnValid.setEnabled(False)
             
-    def btn1_click(self):
-        if(self.turn==False):
-            self._define_color(0)
     
-    def btn2_click(self):
-        if(self.turn==False):
-            self._define_color(1)
-            
-    def btn3_click(self):
-        if(self.turn==False):
-            self._define_color(2)
-    
-    def btn4_click(self):
-        if(self.turn==False):
-            self._define_color(3)
-    
-    def btn5_click(self):
-        if(self.turn==False):
-            self._define_color(4)
-    
-    def btn6_click(self):
-        if(self.turn==False):
-            self._define_color(5)
-    
-    def btn7_click(self):
-        if(self.turn==False):
-            self._define_color(6)
-    
-    def btn8_click(self):
-        if(self.turn==False):
-            self._define_color(7)
-            
-    def btn9_click(self):
-        if(self.turn==False):
-            self.currentPos=8;
-            self._define_color(8)
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

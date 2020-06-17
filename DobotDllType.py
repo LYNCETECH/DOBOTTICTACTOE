@@ -1,6 +1,7 @@
 from ctypes import *
 import time,  platform
 
+#ctypes.windll.kernel32.SetDllDirectoryW(None)
 
 def enum(**enums):
     return type('Enum', (), enums)
@@ -457,11 +458,12 @@ DobotCommunicate = enum(
 
 def load():
     if platform.system() == "Windows":
-        return CDLL("C:\\Users\\SPARNA\\CLARVIE\\Projetco\\DOBOTTICTACTOE\\DobotDll.dll",  RTLD_GLOBAL) 
+    	return CDLL('.\\DobotDll.dll',  RTLD_GLOBAL) 
+
     elif platform.system() == "Darwin" :
-        return CDLL("C:\\Users\\SPARNA\\CLARVIE\\Projetco\\DOBOTTICTACTOE\\libDobotDll.dylib",  RTLD_GLOBAL)
+        return CDLL('.\\libDobotDll.dylib',  RTLD_GLOBAL)
     else:
-        return cdll.loadLibrary("C:\\Users\\SPARNA\\CLARVIE\\Projetco\\DOBOTTICTACTOE\\libDobotDll.so")
+        return cdll.loadLibrary('.\\libDobotDll.so')
     
 def dSleep(ms):
     time.sleep(ms / 1000)

@@ -21,8 +21,8 @@ ZONE_DOBOT = {
 	'z5':{'x': 95, 'y': 182, 'z': -25, 'r': 0}
 }
 
-ZONE_BASE = {'x': 208, 'y':   0, 'z': 100, 'r' : 0}
-CIR_POINT = {'x': 208, 'y': 143, 'z':  15, 'r' : 0}
+ZONE_BASE = {'x': 225, 'y':   0, 'z': 140, 'r' : 0}
+CIR_POINT = {'x': 225, 'y':   0, 'z': 140, 'r' : 0}
 
 CON_STR = {
 	dType.DobotConnect.DobotConnect_NoError:  "DobotConnect_NoError",

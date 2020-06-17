@@ -7,30 +7,21 @@ import cv2
 class ColorLabeler:
 	def __init__(self):
 		
-		self.lower = {'red':(0,80,80),
-         'green':(35,21,62),
-         'blue':(200,83,71),
-         'yellow':(23,73,84),
-         'orange':(10,100,20),
-         'noir':(3,0,0)
+		self.lower = {
+         'blue':(71,83,200),
+         'orange':(20,100,10)
          }
 
-		self.upper = {'red':(20,255,255), 
-		         'green':(55,255,255),
+		self.upper = {
 		         'blue':(255,100,100),
-		         'yellow':(43,100,100),
-		         'orange':(30,255,255),
-         		 'noir':(3,28,17)
+		         'orange':(30,255,255)
 
 		         }
 
 		# define standard colors for circle around the object
-		self.colors = {'red':(0,100,100),
-		          'green':(120,100,100),
+		self.colors = {
 		          'blue':(240,100,100),
-		          'yellow':(255,243,56),
-		          'orange':(0,140,255),
-         		  'noir':(0,0,0)
+		          'orange':(0,128,255),
 		          }
 
 		# allocate memory for the L*a*b* image, then initialize

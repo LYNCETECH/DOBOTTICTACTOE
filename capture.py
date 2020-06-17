@@ -4,7 +4,7 @@ class MyCapture(object):
     
 
     def captureImage(self):
-        webcam = cv2.VideoCapture(1)
+        webcam = cv2.VideoCapture(0)
         try:
             check, frame = webcam.read()
             print(check) #prints true as long as the webcam is running
